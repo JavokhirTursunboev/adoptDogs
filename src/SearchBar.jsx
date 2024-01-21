@@ -4,7 +4,7 @@ import Result from "./Result";
 import { useQuery } from "@tanstack/react-query";
 import fetchSearch from "./fetchSearch";
 import { Button } from "react-bootstrap";
-// import { PoweroffOutlined } from "@ant-design/icons";
+import { useSelector } from "react-redux";
 
 const ANIMALS = ["cat", "bird", "dog", "rabbit"];
 
@@ -24,6 +24,8 @@ export default function SearchBar() {
   const pets = results?.data?.pets ?? [];
   const defferedPets = useDeferredValue(pets);
   const renderedPets = useMemo(() => <Result pets={defferedPets} />, [defferedPets]);
+
+  const adoptedPet = useSelector((state) => state.adoptedPet.value);
   return (
     <div className=" w-full flex flex-col  ">
       <form
@@ -39,11 +41,16 @@ export default function SearchBar() {
             setRequestParam(obj);
           });
         }}
-        className="w-full md:fixed  flex  flex-col gap-2 md:gap-5 md:flex-row  
+        className="w-full  fixed  flex  flex-col gap-2 md:gap-5 md:flex-row  
         items-center md:items-end justify-center
-        md:backdrop-blur-sm
+        backdrop-blur-sm
         "
       >
+        {adoptedPet ? (
+          <div className="w-[100px] mt-4 ">
+            <img src={adoptedPet.images[0]} alt={adoptedPet.name} className="w-full rounded-[50%]" />
+          </div>
+        ) : null}
         <label htmlFor="location" className="flex-row">
           <p> Location</p>
           <input
@@ -51,7 +58,7 @@ export default function SearchBar() {
             name="location"
             id="location"
             placeholder="location"
-            className="border-2 border-black  p-2 md:min-w-[10.75rem]"
+            className="border-2 border-black  p-2 w-[10.75rem] min-w-[10.75rem]"
           />
         </label>
         <label htmlFor="animal" className="">
@@ -63,7 +70,7 @@ export default function SearchBar() {
               setAnimal(e.target.value);
             }}
             id="animal"
-            className=" border-2 border-black p-2 md:min-w-[10.75rem]"
+            className=" border-2 border-black p-2 min-w-[10.75rem]"
           >
             <option className=" " />
             {ANIMALS.map((anim) => (
@@ -82,7 +89,7 @@ export default function SearchBar() {
             id="breed"
             placeholder="breed"
             className="border-2
-            border-black  p-2 md:min-w-[10.75rem] "
+            border-black  p-2 min-w-[10.75rem] "
           >
             <option />
             {breeds.map((breed) => (

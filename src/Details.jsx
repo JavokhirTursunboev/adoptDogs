@@ -11,7 +11,6 @@ function Details() {
   const [modalShow, setModalShow] = useState(false);
   // ! useParams is hook and it return object of key/pair of dynamic params of current URL
   const { id } = useParams();
-  // ! useQuery is used to fetch data from api. It returns an object that cotain status {loading error data (success) }
 
   const results = useQuery({
     queryKey: ["details", id],
@@ -35,7 +34,6 @@ function Details() {
   }
 
   const pet = results.data.pets[0];
-
   return (
     <div className="flex flex-col  items-center  gap-5 mx-10 px-10 py-8 rounded-[20px] bg-blue-200">
       <Carousels images={pet.images} />
@@ -46,7 +44,12 @@ function Details() {
         <button className="bg-red-800 text-white px-6 py-2 rounded-3xl" onClick={() => setModalShow(true)}>
           Adopt {pet.name}
         </button>
-        <MyVerticallyCenteredModal show={modalShow} onHide={() => setModalShow(false)} petName={pet.name} />
+        <MyVerticallyCenteredModal
+          pet={pet}
+          show={modalShow}
+          onHide={() => setModalShow(false)}
+          petName={pet.name}
+        />
         <p>{pet.description}</p>
       </h2>
     </div>
