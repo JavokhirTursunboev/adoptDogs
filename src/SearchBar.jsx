@@ -1,10 +1,11 @@
 import { useDeferredValue, useMemo, useState, useTransition } from "react";
 import useBreedList from "./useBreedList";
 import Result from "./Result";
-import { useQuery } from "@tanstack/react-query";
-import fetchSearch from "./fetchSearch";
+
 import { Button } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { all } from "./searchParamsSlice";
+import { useSearchQuery } from "./petApiService";
 
 const ANIMALS = ["cat", "bird", "dog", "rabbit"];
 
@@ -14,18 +15,15 @@ export default function SearchBar() {
   const [isPending, startTransition] = useTransition();
 
   // form submit
-  const [requestParam, setRequestParam] = useState({
-    animal: "",
-    location: "",
-    breed: "",
-  });
+  const adoptedPet = useSelector((state) => state.adoptedPet.value);
+  const searchParams = useSelector((state) => state.searchParams.value);
+  const { data: pets = [] } = useSearchQuery(searchParams);
 
-  const results = useQuery({ queryKey: ["search", requestParam], queryFn: fetchSearch });
-  const pets = results?.data?.pets ?? [];
   const defferedPets = useDeferredValue(pets);
   const renderedPets = useMemo(() => <Result pets={defferedPets} />, [defferedPets]);
 
-  const adoptedPet = useSelector((state) => state.adoptedPet.value);
+  const dispatch = useDispatch();
+
   return (
     <div className=" w-full flex flex-col  ">
       <form
@@ -38,7 +36,7 @@ export default function SearchBar() {
             location: formData.get("location") ?? "",
           };
           startTransition(() => {
-            setRequestParam(obj);
+            dispatch(all(obj));
           });
         }}
         className="w-full  fixed  flex  flex-col gap-2 md:gap-5 md:flex-row  
@@ -52,7 +50,7 @@ export default function SearchBar() {
           </div>
         ) : null}
         <label htmlFor="location" className="flex-row">
-          <p> Location</p>
+          <div> Location</div>
           <input
             type="text"
             name="location"
@@ -62,7 +60,7 @@ export default function SearchBar() {
           />
         </label>
         <label htmlFor="animal" className="">
-          <p> animal</p>
+          <div> animal</div>
           <select
             name="animal"
             value={animal}
@@ -81,7 +79,7 @@ export default function SearchBar() {
           </select>
         </label>
         <label htmlFor="breed">
-          <p> breed</p>
+          <div> breed</div>
 
           <select
             type="text"

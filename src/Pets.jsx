@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export default function Pets({ name, animal, images, breed, location, id }) {
+const Pets = ({ name, animal, images, breed, location, id }) => {
   let hero = "https://pets-images.dev-apis.com/pets/none.jpg";
   if (images.length) {
     hero = images[0];
@@ -16,9 +16,11 @@ export default function Pets({ name, animal, images, breed, location, id }) {
         <h1 className="text-green-500"> Name: {name}</h1>
         <h2 className="text-blue-400"> Type: {animal}</h2>
         <h3 className="text-red-500">Breed: {breed}</h3>
-        <p>Location: {location}</p>
+        <div>Location: {location}</div>
         <br />
       </div>
     </Link>
   );
-}
+};
+
+export default Pets;

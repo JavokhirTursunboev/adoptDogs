@@ -1,39 +1,37 @@
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import fetchPet from "./fetchPet";
+// import { useQuery } from "@tanstack/react-query";
+// import fetchPet from "./fetchPet";
 
 import Carousels from "./assets/Carousel";
 import ErrorBoundary from "./ErrorBoundary";
 import { useState } from "react";
 import MyVerticallyCenteredModal from "./Modal";
+import { useGetPetQuery } from "./petApiService";
 
 function Details() {
   const [modalShow, setModalShow] = useState(false);
   // ! useParams is hook and it return object of key/pair of dynamic params of current URL
   const { id } = useParams();
+  const { isLoading, data: pet } = useGetPetQuery(id);
+  // const results = useQuery({
+  //   queryKey: ["details", id],
+  //   queryFn: fetchPet,
+  // });
 
-  const results = useQuery({
-    queryKey: ["details", id],
-    queryFn: fetchPet,
-  });
-
-  if (results.isLoading) {
+  if (isLoading) {
     return (
       <div>
         <h2 className="">🌀</h2>
       </div>
     );
   }
-  if (results.isError) {
-    return <h1> OOOPSS error</h1>;
-  }
 
-  if (!results.data || !results.data.pets || results.data.pets.length === 0) {
+  if (!pet) {
     // Handle the case when there is no data or no pets in the response
     return <div>No pet found</div>;
   }
 
-  const pet = results.data.pets[0];
+  // const pet = results.data.pets[0];
   return (
     <div className="flex flex-col  items-center  gap-5 mx-10 px-10 py-8 rounded-[20px] bg-blue-200">
       <Carousels images={pet.images} />
@@ -50,7 +48,7 @@ function Details() {
           onHide={() => setModalShow(false)}
           petName={pet.name}
         />
-        <p>{pet.description}</p>
+        <div>{pet.description}</div>
       </h2>
     </div>
   );
